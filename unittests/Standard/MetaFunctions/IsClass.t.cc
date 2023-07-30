@@ -5,8 +5,6 @@
 namespace llcl {
 namespace {
 
-enum EnumTestType {};
-
 struct StructTestType {};
 
 union UnionTestType {};
@@ -14,12 +12,6 @@ union UnionTestType {};
 class BaseClassTestType {};
 
 class DerivedClassTestType : public BaseClassTestType {};
-
-typedef int (StructTestType::*MethodPtrTestType)();
-
-typedef void (*FunctionPtrTestType)();
-
-typedef int StructTestType::*PMD;
 
 struct Incomplete;
 
