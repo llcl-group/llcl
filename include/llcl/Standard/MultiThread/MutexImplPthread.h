@@ -8,6 +8,7 @@
 #include <pthread.h>
 
 #include "llcl/Standard/Std/cstring.h"
+#include "llcl/Standard/System/Assert.h"
 
 namespace llcl {
 namespace standard {
@@ -38,6 +39,42 @@ class MutexImpl<Platform::PosixThreads> {
 
   void unlock();
 };
+
+inline MutexImpl<Platform::PosixThreads>::MutexImpl() {
+  const int status = pthread_mutex_init(&data_lock, 0);
+  (void)status;
+  LLCL_ASSERT(0 == status);
+}
+
+inline int MutexImpl<Platform::PosixThreads>::try_lock() {
+  LLCL_ASSERT_SAFE(0xdeadbeef !=
+                   *reinterpret_cast<const unsigned*>(&data_lock));
+
+  return pthread_mutex_trylock(&data_lock);
+}
+
+inline void MutexImpl<Platform::PosixThreads>::lock() {
+  LLCL_ASSERT_SAFE(0xdeadbeef !=
+                   *reinterpret_cast<const unsigned*>(&data_lock));
+
+  const int status = pthread_mutex_lock(&data_lock);
+  (void)status;
+  LLCL_ASSERT_SAFE(0 == status);
+}
+
+inline void MutexImpl<Platform::PosixThreads>::unlock() {
+  LLCL_ASSERT_SAFE(0xdeadbeef !=
+                   *reinterpret_cast<const unsigned*>(&data_lock));
+
+  const int status = pthread_mutex_unlock(&data_lock);
+  (void)status;
+  LLCL_ASSERT_SAFE(0 == status);
+}
+
+inline MutexImpl<Platform::PosixThreads>::NativeType&
+MutexImpl<Platform::PosixThreads>::native_mutex() {
+  return data_lock;
+}
 
 }  // namespace mt
 }  // namespace standard
